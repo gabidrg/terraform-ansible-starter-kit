@@ -1,0 +1,21 @@
+- name: Configure cluster
+  hosts: role_kubernetes
+  become: true
+  vars:
+    cluster_master_nodes: []
+    cluster_client_nodes: []
+
+  roles:
+    - { role: some-role }
+  pre_tasks:
+    - debug: var=hostvars
+    - name: Set cluster master nodes list
+      set_fact:
+        cluster_master_nodes: "{{ cluster_master_nodes + [ hostvars[item]['inventory_hostname'] ] }}"
+      when: hostvars[item].metadata.cluster_role == "master"
+      with_items: "{{ groups['role_kubernetes'] }}"
+    - name: Set cluster client nodes list
+      set_fact:
+        cluster_client_nodes: "{{ cluster_client_nodes + [ hostvars[item]['inventory_hostname'] ] }}"
+      when: hostvars[item].metadata.cluster_role == "client"
+      with_items: "{{ groups['role_kubernetes'] }}"

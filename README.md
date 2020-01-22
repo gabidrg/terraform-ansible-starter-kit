@@ -1,0 +1,1 @@
+A starter kit to provision infrastructure in OpenStack with Terraform and manage configuration with Ansible.
